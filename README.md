@@ -1,38 +1,59 @@
-# Spectral Bridge – Signal Reconstruction using In-Context Learning
 
-## Overview
+# Spectral-Bridge
+### Transformer-Based Signal Reconstruction using In-Context Learning
 
-This project was developed for the **Spectral Bridge Challenge** conducted at **Cognizance, IIT Roorkee**.
+![Python](https://img.shields.io/badge/Python-3.10-blue)
+![PyTorch](https://img.shields.io/badge/PyTorch-DeepLearning-red)
+![Transformers](https://img.shields.io/badge/Architecture-Transformers-orange)
+![SignalProcessing](https://img.shields.io/badge/Domain-SignalProcessing-success)
+![Competition](https://img.shields.io/badge/IITRoorkee-3rdPlace-purple)
 
-The goal of the challenge is to reconstruct missing portions of audio signals using a few observed context points. Each audio sample contains sparse observations of a waveform, and the task is to predict the missing target points.
-
-This project implements a learning-based approach that combines neural attention mechanisms with classical interpolation priors to reconstruct signals accurately.
+🏆 Developed for the Spectral Bridge Challenge at Cognizance, IIT Roorkee  
+🥉 Achieved 3rd Place in the competition
 
 ---
 
-## Problem Description
+# Overview
+
+This project focuses on reconstructing missing portions of audio signals using sparse observed waveform points.
+
+The challenge involves predicting missing target points from limited context observations while preserving the underlying spectral structure of the signal.
+
+The proposed solution combines:
+
+- Transformer-based neural architectures
+- Gaussian Process interpolation priors
+- Neural Process representations
+- Context-aware normalization
+- In-context learning strategies
+
+The framework is designed to reconstruct sparse waveforms accurately under limited observation settings.
+
+---
+
+# Problem Description
 
 Each audio sample consists of:
 
-- **100 time steps**
-- **20 observed context points**
-- **80 missing target points**
+- 100 time steps
+- 20 observed context points
+- 80 missing target points
 
-The model must infer the missing waveform values using the provided context.
+The model must infer the missing waveform values using only the provided context points.
 
 Important constraints:
 
-- Each sample is independent.
-- No information can be transferred between samples.
-- Prediction must be based only on the context points within that sample.
+- Each sample is independent
+- No information can be transferred between samples
+- Prediction must rely only on the sample-specific context observations
 
 ---
 
-## Dataset
+# Dataset
 
 Dataset used:
 
-Spectral Graffiti Dataset  
+**Spectral Graffiti Dataset**  
 https://www.kaggle.com/datasets/fda137/spectral-graffiti/data
 
 Dataset properties:
@@ -40,91 +61,171 @@ Dataset properties:
 - ~80,000 samples
 - 100 time points per sample
 - 20 context points
-- 80 target points to reconstruct
+- 80 target points
 - Sampling rate: 1kHz
 
 ---
 
-## Methodology
+# Methodology
 
-The solution follows a hybrid approach combining classical signal reconstruction and neural learning.
+The solution follows a hybrid reconstruction pipeline combining classical signal interpolation and deep neural learning.
 
-Key components:
+## 1. Gaussian Process Features
 
-### 1. Gaussian Process Features
-Multiple Gaussian Process predictions with different kernel scales are computed to capture signal structure at multiple frequencies.
+Multiple Gaussian Process predictions with different kernel scales are computed to capture signal behavior across multiple frequencies.
 
-### 2. Neural Process Architecture
-A transformer-based architecture is used to process the context points and predict missing targets.
+These GP priors help the model estimate waveform continuity and smoothness.
 
-The model learns to infer the spectral signature of each sample dynamically.
+---
 
-### 3. Context Normalization
+## 2. Neural Process Architecture
+
+A transformer-based architecture processes the context points and predicts missing targets.
+
+The model dynamically learns latent spectral representations for each waveform sample.
+
+---
+
+## 3. Context Normalization
+
 Signals are normalized using context statistics:
 
-value_norm = (value − mean_context) / std_context
+```python
+value_norm = (value - mean_context) / std_context
+````
 
-This stabilizes training across samples with different amplitudes.
-
-### 4. Training Strategy
-
-Training uses:
-
-- Huber loss for stability
-- AdamW optimizer
-- Learning rate warmup and cosine decay
-- Gradient clipping
-- Early stopping based on validation loss
+This stabilizes training across samples with varying amplitudes and signal distributions.
 
 ---
 
-## Evaluation Metric
+## 4. Training Strategy
 
-The competition evaluates models using:
+Training pipeline includes:
 
-Mean Squared Error (MSE)
+* Huber Loss
+* AdamW Optimizer
+* Learning Rate Warmup
+* Cosine Learning Rate Decay
+* Gradient Clipping
+* Early Stopping
 
-computed only on the hidden target points where:
+These strategies improve convergence stability and generalization performance.
 
+---
+
+# Evaluation Metric
+
+Competition evaluation uses:
+
+## Mean Squared Error (MSE)
+
+computed only on hidden target points where:
+
+```python
 Is_Context = 0
+```
 
-Validation performance achieved:
+## Validation Performance
 
-MSE ≈ 0.0018  
-RMSE ≈ 0.043
+| Metric | Score   |
+| ------ | ------- |
+| MSE    | ~0.0018 |
+| RMSE   | ~0.043  |
 
 ---
 
-## Inference Pipeline
+# Inference Pipeline
 
-The inference process:
+The inference process follows:
 
-1. Extract context points for each sample
-2. Compute GP interpolation features
-3. Pass context and features through the trained model
-4. Predict missing target values
+1. Extract context points
+2. Compute Gaussian Process interpolation features
+3. Pass features through the transformer model
+4. Predict missing waveform targets
 5. Generate submission CSV
 
-Output format:
+## Output Format
 
+```csv
 Sample_ID, Time_ms, Predicted_Value
+```
 
-Only rows where Is_Context = 0 are included in submission.
+Only rows with:
+
+```python
+Is_Context = 0
+```
+
+are included in final submissions.
 
 ---
 
-## Repository Structure
+# Tech Stack
 
-## How to Run
+* Python
+* PyTorch
+* Transformers
+* Gaussian Processes
+* Neural Processes
+* NumPy
+* Pandas
+* Matplotlib
+* Signal Processing
 
-1. Open the notebook:
+---
 
+# Repository Structure
+
+```bash
+.
+├── spectral_bridge_solution.ipynb
+├── preprocessing/
+├── models/
+├── training/
+├── evaluation/
+├── utils/
+└── submissions/
+```
+
+---
+
+# How to Run
+
+## 1. Open Notebook
+
+```bash
 spectral_bridge_solution.ipynb
+```
 
-2. Run all cells sequentially.
+---
 
-3. The notebook will:
+## 2. Run All Cells Sequentially
 
-- train the model
-- perform validation
-- generate the final submission file.
+The notebook will:
+
+* preprocess the dataset
+* train the reconstruction model
+* perform validation
+* generate predictions
+* export final submission files
+
+---
+
+# Applications
+
+* Audio signal reconstruction
+* Sparse waveform prediction
+* Neural signal interpolation
+* In-context learning research
+* Time-series forecasting
+* Spectral analysis systems
+
+---
+
+# Research Highlights
+
+* Hybrid GP + Transformer reconstruction framework
+* Context-aware signal representation learning
+* Sparse waveform interpolation under low-observation settings
+* Robust signal reconstruction using neural attention mechanisms
+* Competition-grade inference pipeline
